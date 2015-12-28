@@ -7,8 +7,6 @@
 #include "config.h"
 #include "utils.h"
 
-namespace webhttpd {
-
 ConfigParser::ConfigParser(const std::string& conf_file)
 	: conf_file_(conf_file) {
 	if(0 != LoadConfFile(conf_file))
@@ -81,5 +79,3 @@ std::vector<std::string> ConfigParser::ParseItemName(const std::string& item_nam
 
 	return vec;
 }
-
-} // namespace

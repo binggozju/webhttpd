@@ -9,8 +9,6 @@ using namespace log4cplus;
 
 #include "logging.h"
 
-namespace webhttpd {
-
 Logging::Logging(const std::string& logger_name, const std::string& logfile, int max_size, int backup)
 	: logger_name_(logger_name), 
 	  logfile_name_(logfile),
@@ -62,5 +60,3 @@ void Logging::SetLevel(const std::string& level) {
 	else
 		logger_.setLogLevel(INFO_LOG_LEVEL);
 }
-
-} // namespace webhttpd

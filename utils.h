@@ -5,7 +5,6 @@
 #include <fstream>
 #include <iostream>
 
-namespace webhttpd {
 
 /* 字符串辅助函数 */
 extern std::string Trim(std::string& str); // 去除字符串两端的空格
@@ -21,11 +20,5 @@ inline int CheckError(std::string file_name) {  // 检查文件打开是否成�
 	return 0;
 }
 
-
-
-
-
-
-} // namespace
 
 #endif

@@ -26,27 +26,24 @@
 #include <event2/util.h>
 #include <event2/keyvalq_struct.h>
 
-//#include "options_parser.h"
-//#include "config.h"
-//#include "logging.h"
+#include "options_parser.h"
+#include "config.h"
+#include "logging.h"
 
 //using namespace std;
-//using namespace webhttpd;
 
 /*
-namespace webhttpd {
-	// 全局变量
-	OptionsParser* opt_parser;
-	// TODO:ConfigParser* conf_parser;
-	// TODO:日志记录器
+// 全局变量
+OptionsParser* opt_parser;
+// TODO:ConfigParser* conf_parser;
+// TODO:日志记录器
 
-	struct event_base *base;
+struct event_base *base;
 
-	std::vector<int> child_fds; // 存储master进程用来与各worker进程通信的unix域套接字
-	int child_index; // master进程将向child_fds[child_index]写入新的连接套接字，传递给对应的worker子进程 
+std::vector<int> child_fds; // 存储master进程用来与各worker进程通信的unix域套接字
+int child_index; // master进程将向child_fds[child_index]写入新的连接套接字，传递给对应的worker子进程 
 	
-	int parent_fd; // 在worker子进程中存储的是用来与master进程通信的unix域套接字，在master进程中为-1
-}
+int parent_fd; // 在worker子进程中存储的是用来与master进程通信的unix域套接字，在master进程中为-1
 */
 
 char uri_root[512];

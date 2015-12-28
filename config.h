@@ -6,7 +6,6 @@
 
 #include <libjson/libjson.h>
 
-namespace webhttpd {
 
 class ConfigParser {
 public:
@@ -28,7 +27,5 @@ private:
 	/* 解析配置项的路径，如对于"common|worker_processes"，会将common和worker_processes分别解析出来并存储到vector中 */
 	std::vector<std::string> ParseItemName(const std::string& item_name);
 };
-
-} // namespace webhttpd
 
 #endif

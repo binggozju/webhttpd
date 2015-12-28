@@ -5,8 +5,6 @@
 #include <vector>
 #include <map>
 
-namespace webhttpd {
-
 /* 命令行选项 */
 struct Option {
 	char short_name_;
@@ -56,7 +54,5 @@ private:
 	OptionsParser(const OptionsParser&);
 	OptionsParser& operator=(const OptionsParser&);
 }; // class OptionsParser
-
-} // namespace
 
 #endif

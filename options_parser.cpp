@@ -6,8 +6,6 @@
 
 #include "options_parser.h"
 
-namespace webhttpd {
-
 OptionsParser::OptionsParser() {
 	AddNewOption('c', "conf", "specify the configuration file.");
 	AddNewOption('h', "help", "print the help infomation.");
@@ -118,5 +116,3 @@ OptionsParser* OptionsParser::instance_ = new OptionsParser();
 OptionsParser* OptionsParser::GetInstance() {
 	return instance_;
 }
-
-} // namespace webhttpd

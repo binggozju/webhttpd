@@ -2,8 +2,6 @@
 
 #include "utils.h"
 
-namespace webhttpd {
-
 std::string Trim(std::string& str) {
 	if("" == str)
 		return "";
@@ -44,5 +42,3 @@ int ReadFileByLine(std::string file_name, std::string& content) {
 
 	return 0;
 }
-
-} // namespace

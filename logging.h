@@ -6,8 +6,6 @@
 #include <log4cplus/logger.h>
 using namespace log4cplus;
 
-namespace webhttpd {
-
 /* 日志级别 */
 /* enum LogLevel {
 	debug = 0,
@@ -41,7 +39,5 @@ private:
 	int max_file_size_; // 日志文件的最大尺寸，单位为MB，当达到最大则会转储
 	int max_backup_; // 日志文件个数最多为max_backup_ + 1
 };
-
-} // namespace webhttpd
 
 #endif
