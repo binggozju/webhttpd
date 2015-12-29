@@ -3,21 +3,17 @@
 
 #include <string>
 #include <vector>
-#include <stdexcept>
-
-#include <libjson/libjson.h>
 
 #include "config.h"
 #include "utils.h"
 
 ConfigParser::ConfigParser() {
-	//conf_file_ = "";
-	//root_ = NULL;
+	conf_file_ = "";
 }
 
 ConfigParser::ConfigParser(const std::string& conf_file): conf_file_(conf_file) {
 	if(0 != LoadConfFile(conf_file))
-		fprintf(stderr, "error: fail to create the ConfigParser object.\n");
+		conf_file_ = "";
 }
  
 ConfigParser::~ConfigParser() {
@@ -28,46 +24,73 @@ int ConfigParser::LoadConfFile(const std::string& conf_file) {
 	/* 读取配置文件 */
 	std::string conf_data("");
 	if(0 != ReadFileByWord(conf_file, conf_data)) {
-		fprintf(stderr, "error: unable to open the configuration file.\n");
-		return -1;
+		fprintf(stderr, "error: unable to open the configuration file\n");
+		return 1;
 	}
-	//std::cout << conf_data << std::endl;
 
 	/* 解析配置文件 */
-	try {
-		root_ = libjson::parse(conf_data);
+	if("" == conf_data) {
+		fprintf(stderr, "error: the config file is empty\n");
+		return 2;
 	}
-	catch(std::invalid_argument& e) {
-		fprintf(stderr, "error: %s", e.what().c_str());
-		return -2;
+	if(doc_.Parse(conf_data.c_str()).HasParseError() || !doc_.IsObject()) {
+		fprintf(stderr, "error: fail to parse the config file\n");
+		return 3;
 	}
 
 	return 0;
 }
 
 std::string ConfigParser::GetStringItem(const std::string& item_name) {
-	JSONNode node = root_.duplicate(); // 不可以用JSONNode node = root_;会发生段错误
+	if("" == conf_file_) {
+		fprintf(stderr, "has not load config file\n");
+		return "";
+	}
+	if("" == item_name)
+		return "";
 
 	std::vector<std::string> vec = ParseItemName(item_name);
+	Value* val = &doc_;
 	for(std::vector<std::string>::size_type i = 0; i != vec.size(); ++i) {
-		json_string json_name = libjson::to_json_string(vec[i]);
-		node = node[json_name].duplicate();
+		if(val->HasMember(vec[i].c_str()))
+			val = &((*val)[vec[i].c_str()]);
+		else {
+			fprintf(stderr, "%s is not element in config file\n", vec[i].c_str());
+			return "";
+		}
 	}
-
-	std::string val = libjson::to_std_string(node.as_string());
-	return val;
+	
+	if(val->IsString())
+		return val->GetString();
+	else {
+		return "";
+	}
 }
 
 int ConfigParser::GetIntItem(const std::string& item_name) {
-	JSONNode node = root_.duplicate();
+	if("" == conf_file_) {
+		fprintf(stderr, "has not load config file\n");
+		return 0;
+	}
+	if("" == item_name)
+		return 0;
 
 	std::vector<std::string> vec = ParseItemName(item_name);
+	Value* val = &doc_;
 	for(std::vector<std::string>::size_type i = 0; i != vec.size(); ++i) {
-		json_string json_name = libjson::to_json_string(vec[i]);
-		node = node[json_name].duplicate();
+		if(val->HasMember(vec[i].c_str()))
+			val = &((*val)[vec[i].c_str()]);
+		else {
+			fprintf(stderr, "%s is not element in config file\n", vec[i].c_str());
+			return 0;
+		}
 	}
-
-	return node.as_int();
+	
+	if(val->IsInt())
+		return val->GetInt();
+	else {
+		return 0;
+	}
 }
 
 std::vector<std::string> ConfigParser::ParseItemName(const std::string& item_name) {
