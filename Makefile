@@ -1,20 +1,18 @@
-#all: webhttpd
-#webhttpd: webhttpd.cpp options_parser.cpp config.cpp utils.cpp logging.cpp
-#	g++ -O0 -g -Wall webhttpd.cpp options_parser.cpp config.cpp utils.cpp logging.cpp  -ljson -llog4cplus -lpthread -o webhttpd
-#clean:
-#	rm webhttpd
+VERSION = 0.1.0
+APP = webhttp
+TARGET = webhttpd.${VERSION}
 
-TARGET = webhttpd
+INCLUDES = -I/usr/local/include -I/usr/include -I./include
+LIBS = -L/usr/local/lib -L/usr/lib
 
-INCLUDES = -I/usr/local/include
-LIBS = -L/usr/local/lib
-
+CC = gcc
 CXX = g++
+CTAGS = ctags
 CFLAGS = -g -Wall -O0 -c $(INCLUDES) 
 LDFLAGS = -ljson -llog4cplus -lpthread -levent $(LIBS)
 
 SRCDIR = .
-SRCS = $(wildcard $(SRCDIR)/*.cpp)
+SRCS = $(wildcard $(SRCDIR)/*.cc $(SRCDIR)/*.cpp)
 OBJS = $(addsuffix .o, $(basename $(SRCS)))
 HEADS = $(addsuffix .h, $(basename $(SRCS)))
 
@@ -22,10 +20,12 @@ HEADS = $(addsuffix .h, $(basename $(SRCS)))
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-	$(CXX) $(LDFLAGS) $^ -o $@
+	$(CXX) $(LDFLAGS) -o $@ $^
 
 %.o: %.cpp
-	$(CXX) $(CFLAGS) $< -o $@
+	$(CXX) $(CFLAGS) -o $@ $<
 
 clean:
 	rm -rf *.o $(TARGET)
+install:
+	cp $(TARGET) ./bin/

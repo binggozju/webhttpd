@@ -17,8 +17,11 @@ using namespace log4cplus;
 /* 日志类，带转储功能 */
 class Logging {
 public:
+	Logging();
 	Logging(const std::string& logger_name, const std::string& logfile, int max_size, int backup);
 	~Logging();
+
+	SetLogger(const std::string& logger_name, const std::string& logfile, int max_size, int backup);
 
 	void Debug(const std::string& msg);
 	void Info(const std::string& msg);

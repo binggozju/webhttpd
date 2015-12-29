@@ -16,9 +16,8 @@
 #include <stdio.h>
 #include <string.h>
 
-//#include <iostream>
-//#include <string>
-//#include <vector>
+#include <string>
+#include <vector>
 
 #include <event2/event.h>
 #include <event2/http.h>
@@ -30,21 +29,20 @@
 #include "config.h"
 #include "logging.h"
 
-//using namespace std;
-
-/*
-// 全局变量
-OptionsParser* opt_parser;
-// TODO:ConfigParser* conf_parser;
-// TODO:日志记录器
+using namespace std;
 
 struct event_base *base;
+struct evhttp *http;
+struct evhttp_bound_socket *handle;
+//string uri_root[512]; 
 
 std::vector<int> child_fds; // 存储master进程用来与各worker进程通信的unix域套接字
 int child_index; // master进程将向child_fds[child_index]写入新的连接套接字，传递给对应的worker子进程 
-	
 int parent_fd; // 在worker子进程中存储的是用来与master进程通信的unix域套接字，在master进程中为-1
-*/
+
+OptionsParser* opt_parser;
+ConfigParser conf_parser;
+Logging logger;
 
 char uri_root[512];
 
@@ -268,43 +266,47 @@ void syntax(void)
 }
 
 int main(int argc, char** argv) {
-	/*
-	std::string conf_file_name = "conf/conf.json"; // 默认的配置文件
-	
-	// 处理命令行选项
+	string conf_file_name = "conf/webhttpd.json";
+
+	// parse command option
 	opt_parser = OptionsParser::GetInstance();
 	opt_parser->Parse(argc, argv);
-
 	if("" != opt_parser->GetOptionVal('h')) {
 		opt_parser->Help();
 		return 0;
 	}
 	if("" != opt_parser->GetOptionVal('c'))
 		conf_file_name = opt_parser->GetOptionVal('c');
-	std::cout << "configuration file: " << conf_file_name << std::endl;
+	fprintf(stderr, "configuration file: %s\n", conf_file_name.c_str());
 
-	// 加载配置文件
-	ConfigParser conf_parser(conf_file_name);
-	std::cout << "load " << conf_file_name << " successfully." << std::endl;
 
-	// 初始化日志模块
-	std::string log_level = conf_parser.GetStringItem("log| level");
+	// load configuration file
+	if(0 != conf_parser.LoadConfFile(conf_file_name)) 
+		fprintf(stderr, "error: fail to create the ConfigParser object.\n");
+	fprintf(stderr, "load %s successfully\n", conf_file_name.c_str());
+
+
+	// initialize the logging module
+	string log_level = conf_parser.GetStringItem("log| level");
 	int log_maxsize = conf_parser.GetIntItem("log| maxsize");
 	int log_backup = conf_parser.GetIntItem("log| backup");
-	std::string logfile_runtime_name = conf_parser.GetStringItem("log| runtime_log");
+	string logfile_runtime_name = conf_parser.GetStringItem("log| runtime_log");
+	string logfile_runtime_name = conf_parser.GetStringItem("log| access_log");
+	
+	logger.SetLogger("master", logfile_runtime_name, log_maxsize, log_backup);
+	logger.SetLevel(log_level);
+	fprintf(stdout, "initialize logger\n");
 
-	Logging logger_master("master", logfile_runtime_name, log_maxsize, log_backup);
-	logger_master.SetLevel(log_level);
-
-	logger_master.Debug("This is a debug message");
-	logger_master.Info("This is a info message");
-	logger_master.Warn("This is a warn message");
-	//logger_master.Error("This is a error message");
+	// TODO
+	//logger.Debug("This is a debug message");
+	//logger.Info("This is a info message");
+	//logger.Warn("This is a warn message");
 
 	// TODO: 信号处理
 	// TODO: 创建多进程，基于libevent来处理http请求
+	/*
 	int worker_num = conf_parser.GetIntItem("common| worker_processes");
-	logger_master.Info("webhttp will start xxx worker process"); // TODO: 修改接口
+	logger.Info("webhttp will start xxx worker process"); // TODO: 修改接口
 
 	for(int i = 0; i < worker_num; ++i) {
 		int sockfd[2];
@@ -319,10 +321,7 @@ int main(int argc, char** argv) {
 	delete opt_parser;
 	*/
 
-
-	struct event_base *base;
-	struct evhttp *http;
-	struct evhttp_bound_socket *handle;
+	// ===================================================================
 
 	unsigned short port = 0;
 	if (signal(SIGPIPE, SIG_IGN) == SIG_ERR)

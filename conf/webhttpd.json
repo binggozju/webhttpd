@@ -5,7 +5,7 @@
 	},
 
 	"log": {
-		"level": "info",
+		"level": "debug",
 		"maxsize": 1,
 		"backup": 3,
 		"runtime_log": "./logs/webhttpd.log",

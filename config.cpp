@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <stdlib.h>
+
 #include <string>
 #include <vector>
 #include <stdexcept>
@@ -7,20 +10,25 @@
 #include "config.h"
 #include "utils.h"
 
-ConfigParser::ConfigParser(const std::string& conf_file)
-	: conf_file_(conf_file) {
+ConfigParser::ConfigParser() {
+	//conf_file_ = "";
+	//root_ = NULL;
+}
+
+ConfigParser::ConfigParser(const std::string& conf_file): conf_file_(conf_file) {
 	if(0 != LoadConfFile(conf_file))
-		std::cout << "error: fail to create the ConfigParser object." << std::endl;
+		fprintf(stderr, "error: fail to create the ConfigParser object.\n");
 }
  
 ConfigParser::~ConfigParser() {
+
 }
 
 int ConfigParser::LoadConfFile(const std::string& conf_file) {
 	/* 读取配置文件 */
 	std::string conf_data("");
 	if(0 != ReadFileByWord(conf_file, conf_data)) {
-		std::cout << "error: unable to open the configuration file." << std::endl;
+		fprintf(stderr, "error: unable to open the configuration file.\n");
 		return -1;
 	}
 	//std::cout << conf_data << std::endl;
@@ -30,7 +38,7 @@ int ConfigParser::LoadConfFile(const std::string& conf_file) {
 		root_ = libjson::parse(conf_data);
 	}
 	catch(std::invalid_argument& e) {
-		std::cout << "error: " << e.what() << std::endl;
+		fprintf(stderr, "error: %s", e.what().c_str());
 		return -2;
 	}
 

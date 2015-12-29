@@ -9,9 +9,12 @@
 
 class ConfigParser {
 public:
+	ConfigParser();
 	explicit ConfigParser(const std::string& conf_file);
 	~ConfigParser();
 
+	int LoadConfFile(const std::string& conf_file);
+	
 	/* item_name: 配置项的路径及名称，例如"worker_processes"的item_name为"common|worker_processes"
 	 * val: 存储配置项的值
 	 */
@@ -21,8 +24,6 @@ public:
 private:
 	std::string conf_file_;
 	JSONNode root_;
-
-	int LoadConfFile(const std::string& conf_file);
 
 	/* 解析配置项的路径，如对于"common|worker_processes"，会将common和worker_processes分别解析出来并存储到vector中 */
 	std::vector<std::string> ParseItemName(const std::string& item_name);

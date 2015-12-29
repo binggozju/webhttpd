@@ -9,6 +9,13 @@ using namespace log4cplus;
 
 #include "logging.h"
 
+Logging::Logging() {
+	logger_name_ = "";
+	logfile_name_ = "";
+	max_file_size_ = 0;
+	backup = 0;
+}
+
 Logging::Logging(const std::string& logger_name, const std::string& logfile, int max_size, int backup)
 	: logger_name_(logger_name), 
 	  logfile_name_(logfile),
@@ -30,6 +37,26 @@ Logging::Logging(const std::string& logger_name, const std::string& logfile, int
 }
 
 Logging::~Logging() {
+}
+
+Logging::SetLogger(const std::string& logger_name, const std::string& logfile, int max_size, int backup) {
+	logger_name_ = logger_name; 
+	logfile_name_= logfile;
+	max_file_size_ = max_size;
+	max_backup_ = backup;
+	
+	SharedAppenderPtr appender(new RollingFileAppender(logfile, max_size*1024*1024, backup));
+	appender->setName("log file");
+
+	std::string pattern = "%D{%Y/%m/%d %H:%M:%S} - %m%n";
+	std::auto_ptr<Layout> layout(new PatternLayout(pattern));
+
+	appender->setLayout(layout);
+
+	/* 设置日志记录器 */
+	logger_ = Logger::getInstance(logger_name);
+	logger_.addAppender(appender);
+	logger_.setLogLevel(INFO_LOG_LEVEL);
 }
 
 void Logging::Debug(const std::string& msg) {

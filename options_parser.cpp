@@ -1,8 +1,9 @@
+#include <stdlib.h>
+#include <stdio.h>
+
 #include <vector>
 #include <string>
 #include <map>
-
-#include <iostream>
 
 #include "options_parser.h"
 
@@ -24,7 +25,7 @@ void OptionsParser::UpdateOptionVal(char opt, std::string val) {
 	if(options_kv_.count(opt))
 		options_kv_[opt] = val;
 	else
-		std::cout<<"Error: -"<<opt<<" is an "<<"unvalid option.\n";
+		fprintf(stderr, "Error: -%c is an unvalid option\n", opt)
 }
 
 void OptionsParser::UpdateOptionVal(std::string opt, std::string val) {
@@ -34,7 +35,7 @@ void OptionsParser::UpdateOptionVal(std::string opt, std::string val) {
 			return;
 		}
 
-	std::cout<<"Error: --"<<opt<<" is an "<<"unvalid option.\n";
+	fprintf(stderr, "Error: --%s is an unvailid option\n", opt.c_str());
 }
 
 void OptionsParser::DeleteOptionVal() {
@@ -90,7 +91,7 @@ int OptionsParser::Parse(int argc, char** argv) {
 			}
 		}
 		else {
-			std::cout<<"Error: "<<arg_cur<<" is an unvalid option.\n";
+			fprintf(stderr, "Error: %s is an unvalid option.\n", arg_cur.c_str());
 			arg_index++;
 		}
 	} // while
@@ -108,7 +109,7 @@ std::string OptionsParser::GetOptionVal(char opt) {
 void OptionsParser::Help() const {
 	std::cout<<"[Usage]\n";
 	for(std::vector<Option>::size_type i = 0; i != options_.size(); ++i)
-		std::cout<<"-"<<options_[i].short_name_<<", "<<"--"<<options_[i].long_name_<<"\n\t"<<options_[i].info_<<"\n";
+		fprintf(stdout, "-%c, --%s\n\t%s\n", options_[i].short_name_, options_[i].long_name_.c_str(), options_[i].info_.c_str())
 }
 
 OptionsParser* OptionsParser::instance_ = new OptionsParser();
