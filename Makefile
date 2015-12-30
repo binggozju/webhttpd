@@ -9,7 +9,7 @@ CC = gcc
 CXX = g++
 CTAGS = ctags
 CFLAGS = -g -Wall -O0 -c $(INCLUDES) 
-LDFLAGS = -ljson -llog4cplus -lpthread -levent $(LIBS)
+LDFLAGS = -llog4cplus -lpthread -levent $(LIBS)
 
 SRCDIR = .
 SRCS = $(wildcard $(SRCDIR)/*.cc $(SRCDIR)/*.cpp)

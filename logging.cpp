@@ -1,3 +1,6 @@
+#include <stdlib.h>
+#include <stdio.h>
+
 #include <string>
 #include <memory>
 
@@ -13,7 +16,7 @@ Logging::Logging() {
 	logger_name_ = "";
 	logfile_name_ = "";
 	max_file_size_ = 0;
-	backup = 0;
+	max_backup_ = 0;
 }
 
 Logging::Logging(const std::string& logger_name, const std::string& logfile, int max_size, int backup)
@@ -39,7 +42,7 @@ Logging::Logging(const std::string& logger_name, const std::string& logfile, int
 Logging::~Logging() {
 }
 
-Logging::SetLogger(const std::string& logger_name, const std::string& logfile, int max_size, int backup) {
+void Logging::SetLogger(const std::string& logger_name, const std::string& logfile, int max_size, int backup) {
 	logger_name_ = logger_name; 
 	logfile_name_= logfile;
 	max_file_size_ = max_size;
@@ -60,22 +63,43 @@ Logging::SetLogger(const std::string& logger_name, const std::string& logfile, i
 }
 
 void Logging::Debug(const std::string& msg) {
+	if("" == logger_name_) {
+		fprintf(stderr, "has not set logger\n");
+		return;
+	}
 	LOG4CPLUS_DEBUG(logger_, msg);
 }
 
 void Logging::Info(const std::string& msg) {
+	if("" == logger_name_) {
+		fprintf(stderr, "has not set logger\n");
+		return;
+	}
 	LOG4CPLUS_INFO(logger_, msg);
 }
 
 void Logging::Warn(const std::string& msg) {
+	if("" == logger_name_) {
+		fprintf(stderr, "has not set logger\n");
+		return;
+	}
 	LOG4CPLUS_WARN(logger_, msg);
 }
 
 void Logging::Error(const std::string& msg) {
+	if("" == logger_name_) {
+		fprintf(stderr, "has not set logger\n");
+		return;
+	}
 	LOG4CPLUS_ERROR(logger_, msg);
 }
 
 void Logging::SetLevel(const std::string& level) {
+	if("" == logger_name_) {
+		fprintf(stderr, "has not set logger\n");
+		return;
+	}
+
 	if("debug" == level)
 		logger_.setLogLevel(DEBUG_LOG_LEVEL);
 	else if("info" == level)

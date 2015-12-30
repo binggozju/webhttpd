@@ -281,8 +281,10 @@ int main(int argc, char** argv) {
 
 
 	// load configuration file
-	if(0 != conf_parser.LoadConfFile(conf_file_name)) 
-		fprintf(stderr, "error: fail to create the ConfigParser object.\n");
+	if(0 != conf_parser.LoadConfFile(conf_file_name)) { 
+		fprintf(stderr, "error: fail to create the ConfigParser object\n");
+		return 1;
+	}
 	fprintf(stderr, "load %s successfully\n", conf_file_name.c_str());
 
 
@@ -291,14 +293,14 @@ int main(int argc, char** argv) {
 	int log_maxsize = conf_parser.GetIntItem("log| maxsize");
 	int log_backup = conf_parser.GetIntItem("log| backup");
 	string logfile_runtime_name = conf_parser.GetStringItem("log| runtime_log");
-	string logfile_runtime_name = conf_parser.GetStringItem("log| access_log");
+	string logfile_access_name = conf_parser.GetStringItem("log| access_log");
 	
 	logger.SetLogger("master", logfile_runtime_name, log_maxsize, log_backup);
 	logger.SetLevel(log_level);
 	fprintf(stdout, "initialize logger\n");
 
 	// TODO
-	//logger.Debug("This is a debug message");
+	logger.Debug("this is the first log of webhttpd");
 	//logger.Info("This is a info message");
 	//logger.Warn("This is a warn message");
 
@@ -326,10 +328,10 @@ int main(int argc, char** argv) {
 	unsigned short port = 0;
 	if (signal(SIGPIPE, SIG_IGN) == SIG_ERR)
 		return (1);
-	if (argc < 2) {
-		syntax();
-		return 1;
-	}
+	//if (argc < 2) {
+	//	syntax();
+	//	return 1;
+	//}
 
 	base = event_base_new();
 	if (!base) {

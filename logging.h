@@ -21,7 +21,7 @@ public:
 	Logging(const std::string& logger_name, const std::string& logfile, int max_size, int backup);
 	~Logging();
 
-	SetLogger(const std::string& logger_name, const std::string& logfile, int max_size, int backup);
+	void SetLogger(const std::string& logger_name, const std::string& logfile, int max_size, int backup);
 
 	void Debug(const std::string& msg);
 	void Info(const std::string& msg);

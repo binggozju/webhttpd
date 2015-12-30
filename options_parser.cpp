@@ -25,7 +25,7 @@ void OptionsParser::UpdateOptionVal(char opt, std::string val) {
 	if(options_kv_.count(opt))
 		options_kv_[opt] = val;
 	else
-		fprintf(stderr, "Error: -%c is an unvalid option\n", opt)
+		fprintf(stderr, "Error: -%c is an unvalid option\n", opt);
 }
 
 void OptionsParser::UpdateOptionVal(std::string opt, std::string val) {
@@ -107,9 +107,9 @@ std::string OptionsParser::GetOptionVal(char opt) {
 }
 
 void OptionsParser::Help() const {
-	std::cout<<"[Usage]\n";
+	fprintf(stdout, "[Usage]\n");
 	for(std::vector<Option>::size_type i = 0; i != options_.size(); ++i)
-		fprintf(stdout, "-%c, --%s\n\t%s\n", options_[i].short_name_, options_[i].long_name_.c_str(), options_[i].info_.c_str())
+		fprintf(stdout, "  -%c, --%s\n\t%s\n", options_[i].short_name_, options_[i].long_name_.c_str(), options_[i].info_.c_str());
 }
 
 OptionsParser* OptionsParser::instance_ = new OptionsParser();

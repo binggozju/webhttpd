@@ -21,6 +21,12 @@ ConfigParser::~ConfigParser() {
 }
 
 int ConfigParser::LoadConfFile(const std::string& conf_file) {
+	if("" ==  conf_file) {
+		fprintf(stderr, "error: there is no config file\n");
+		return 1;
+	}
+	conf_file_ = conf_file;
+	
 	/* 读取配置文件 */
 	std::string conf_data("");
 	if(0 != ReadFileByWord(conf_file, conf_data)) {
@@ -31,11 +37,11 @@ int ConfigParser::LoadConfFile(const std::string& conf_file) {
 	/* 解析配置文件 */
 	if("" == conf_data) {
 		fprintf(stderr, "error: the config file is empty\n");
-		return 2;
+		return 1;
 	}
 	if(doc_.Parse(conf_data.c_str()).HasParseError() || !doc_.IsObject()) {
 		fprintf(stderr, "error: fail to parse the config file\n");
-		return 3;
+		return 1;
 	}
 
 	return 0;
