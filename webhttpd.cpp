@@ -1,42 +1,22 @@
-/* a easy http server based on libevent.
- *
- * Compile with:
- *   g++ -I/usr/local/include -o webhttpd webhttpd.cpp -L/usr/local/lib -levent
+/*
+ * a easy http server based on libevent.
+ * 
+ * author:	binggozju
+ * date:	2015-12-29
  */
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/socket.h>
-#include <signal.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <dirent.h>
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-
-#include <string>
-#include <vector>
-
-#include <event2/event.h>
-#include <event2/http.h>
-#include <event2/buffer.h>
-#include <event2/util.h>
-#include <event2/keyvalq_struct.h>
+#include "webhttpd.h"
 
 #include "options_parser.h"
 #include "config.h"
 #include "logging.h"
-
-using namespace std;
 
 struct event_base *base;
 struct evhttp *http;
 struct evhttp_bound_socket *handle;
 //string uri_root[512]; 
 
-std::vector<int> child_fds; // 存储master进程用来与各worker进程通信的unix域套接字
+vector<int> child_fds; // 存储master进程用来与各worker进程通信的unix域套接字
 int child_index; // master进程将向child_fds[child_index]写入新的连接套接字，传递给对应的worker子进程 
 int parent_fd; // 在worker子进程中存储的是用来与master进程通信的unix域套接字，在master进程中为-1
 

@@ -1,3 +1,5 @@
+# Makefile for webhttpd
+
 VERSION = 0.1.0
 APP = webhttp
 TARGET = webhttpd.${VERSION}
@@ -11,11 +13,11 @@ CTAGS = ctags
 CFLAGS = -g -Wall -O0 -c $(INCLUDES) 
 LDFLAGS = -llog4cplus -lpthread -levent $(LIBS)
 
+BINDIR = ./bin
 SRCDIR = .
 SRCS = $(wildcard $(SRCDIR)/*.cc $(SRCDIR)/*.cpp)
 OBJS = $(addsuffix .o, $(basename $(SRCS)))
 HEADS = $(addsuffix .h, $(basename $(SRCS)))
-
 
 all: $(TARGET)
 
@@ -28,4 +30,10 @@ $(TARGET): $(OBJS)
 clean:
 	rm -rf *.o $(TARGET)
 install:
-	cp $(TARGET) ./bin/
+	mkdir -p $(BINDIR); install $(TARGET) $(BINDIR)/
+show:
+	@echo $(SRCS)
+	@echo "------------------------------------"
+	@echo $(OBJS)
+	@echo "------------------------------------"
+	@echo $(HEADS)

@@ -11,20 +11,11 @@
 		"runtime_log": "./logs/webhttpd.log",
 		"access_log": "./logs/access.log"
 	},
-
-	"http": {
-		"keepalive_timeout": 65
-	},
 	
 	"server": {
-		"website1": {
-			"listen": 80,
-			"www": "/data/zhanyebing/webhttpd"
-		},
-		"website2": {
-			"listen": 8080,
-			"www": "/path/to/your/dir"
-		}
+		"keepalive_timeout": 65
+		"listen": 80,
+		"www": "./html"
 	}
 
 }

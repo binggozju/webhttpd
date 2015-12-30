@@ -1,15 +1,3 @@
-#include <stdlib.h>
-#include <stdio.h>
-
-#include <string>
-#include <memory>
-
-#include <log4cplus/logger.h>
-#include <log4cplus/loggingmacros.h>
-#include <log4cplus/fileappender.h>
-#include <log4cplus/layout.h>
-using namespace log4cplus;
-
 #include "logging.h"
 
 Logging::Logging() {
@@ -19,7 +7,7 @@ Logging::Logging() {
 	max_backup_ = 0;
 }
 
-Logging::Logging(const std::string& logger_name, const std::string& logfile, int max_size, int backup)
+Logging::Logging(const string& logger_name, const string& logfile, int max_size, int backup)
 	: logger_name_(logger_name), 
 	  logfile_name_(logfile),
 	  max_file_size_(max_size),
@@ -28,8 +16,8 @@ Logging::Logging(const std::string& logger_name, const std::string& logfile, int
 	SharedAppenderPtr appender(new RollingFileAppender(logfile, max_size*1024*1024, backup));
 	appender->setName("log file");
 
-	std::string pattern = "%D{%Y/%m/%d %H:%M:%S} - %m%n";
-	std::auto_ptr<Layout> layout(new PatternLayout(pattern));
+	string pattern = "%D{%Y/%m/%d %H:%M:%S} - %m%n";
+	auto_ptr<Layout> layout(new PatternLayout(pattern));
 
 	appender->setLayout(layout);
 
@@ -42,7 +30,7 @@ Logging::Logging(const std::string& logger_name, const std::string& logfile, int
 Logging::~Logging() {
 }
 
-void Logging::SetLogger(const std::string& logger_name, const std::string& logfile, int max_size, int backup) {
+void Logging::SetLogger(const string& logger_name, const string& logfile, int max_size, int backup) {
 	logger_name_ = logger_name; 
 	logfile_name_= logfile;
 	max_file_size_ = max_size;
@@ -51,8 +39,8 @@ void Logging::SetLogger(const std::string& logger_name, const std::string& logfi
 	SharedAppenderPtr appender(new RollingFileAppender(logfile, max_size*1024*1024, backup));
 	appender->setName("log file");
 
-	std::string pattern = "%D{%Y/%m/%d %H:%M:%S} - %m%n";
-	std::auto_ptr<Layout> layout(new PatternLayout(pattern));
+	string pattern = "%D{%Y/%m/%d %H:%M:%S} - %m%n";
+	auto_ptr<Layout> layout(new PatternLayout(pattern));
 
 	appender->setLayout(layout);
 
@@ -62,7 +50,7 @@ void Logging::SetLogger(const std::string& logger_name, const std::string& logfi
 	logger_.setLogLevel(INFO_LOG_LEVEL);
 }
 
-void Logging::Debug(const std::string& msg) {
+void Logging::Debug(const string& msg) {
 	if("" == logger_name_) {
 		fprintf(stderr, "has not set logger\n");
 		return;
@@ -70,7 +58,7 @@ void Logging::Debug(const std::string& msg) {
 	LOG4CPLUS_DEBUG(logger_, msg);
 }
 
-void Logging::Info(const std::string& msg) {
+void Logging::Info(const string& msg) {
 	if("" == logger_name_) {
 		fprintf(stderr, "has not set logger\n");
 		return;
@@ -78,7 +66,7 @@ void Logging::Info(const std::string& msg) {
 	LOG4CPLUS_INFO(logger_, msg);
 }
 
-void Logging::Warn(const std::string& msg) {
+void Logging::Warn(const string& msg) {
 	if("" == logger_name_) {
 		fprintf(stderr, "has not set logger\n");
 		return;
@@ -86,7 +74,7 @@ void Logging::Warn(const std::string& msg) {
 	LOG4CPLUS_WARN(logger_, msg);
 }
 
-void Logging::Error(const std::string& msg) {
+void Logging::Error(const string& msg) {
 	if("" == logger_name_) {
 		fprintf(stderr, "has not set logger\n");
 		return;
@@ -94,7 +82,7 @@ void Logging::Error(const std::string& msg) {
 	LOG4CPLUS_ERROR(logger_, msg);
 }
 
-void Logging::SetLevel(const std::string& level) {
+void Logging::SetLevel(const string& level) {
 	if("" == logger_name_) {
 		fprintf(stderr, "has not set logger\n");
 		return;

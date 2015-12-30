@@ -1,9 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-#include <string>
-#include <vector>
-
 #include "config.h"
 #include "utils.h"
 
@@ -11,7 +5,7 @@ ConfigParser::ConfigParser() {
 	conf_file_ = "";
 }
 
-ConfigParser::ConfigParser(const std::string& conf_file): conf_file_(conf_file) {
+ConfigParser::ConfigParser(const string& conf_file): conf_file_(conf_file) {
 	if(0 != LoadConfFile(conf_file))
 		conf_file_ = "";
 }
@@ -20,7 +14,7 @@ ConfigParser::~ConfigParser() {
 
 }
 
-int ConfigParser::LoadConfFile(const std::string& conf_file) {
+int ConfigParser::LoadConfFile(const string& conf_file) {
 	if("" ==  conf_file) {
 		fprintf(stderr, "error: there is no config file\n");
 		return 1;
@@ -28,7 +22,7 @@ int ConfigParser::LoadConfFile(const std::string& conf_file) {
 	conf_file_ = conf_file;
 	
 	/* 读取配置文件 */
-	std::string conf_data("");
+	string conf_data("");
 	if(0 != ReadFileByWord(conf_file, conf_data)) {
 		fprintf(stderr, "error: unable to open the configuration file\n");
 		return 1;
@@ -47,7 +41,7 @@ int ConfigParser::LoadConfFile(const std::string& conf_file) {
 	return 0;
 }
 
-std::string ConfigParser::GetStringItem(const std::string& item_name) {
+string ConfigParser::GetStringItem(const string& item_name) {
 	if("" == conf_file_) {
 		fprintf(stderr, "has not load config file\n");
 		return "";
@@ -55,9 +49,9 @@ std::string ConfigParser::GetStringItem(const std::string& item_name) {
 	if("" == item_name)
 		return "";
 
-	std::vector<std::string> vec = ParseItemName(item_name);
+	vector<string> vec = ParseItemName(item_name);
 	Value* val = &doc_;
-	for(std::vector<std::string>::size_type i = 0; i != vec.size(); ++i) {
+	for(vector<string>::size_type i = 0; i != vec.size(); ++i) {
 		if(val->HasMember(vec[i].c_str()))
 			val = &((*val)[vec[i].c_str()]);
 		else {
@@ -73,7 +67,7 @@ std::string ConfigParser::GetStringItem(const std::string& item_name) {
 	}
 }
 
-int ConfigParser::GetIntItem(const std::string& item_name) {
+int ConfigParser::GetIntItem(const string& item_name) {
 	if("" == conf_file_) {
 		fprintf(stderr, "has not load config file\n");
 		return 0;
@@ -81,9 +75,9 @@ int ConfigParser::GetIntItem(const std::string& item_name) {
 	if("" == item_name)
 		return 0;
 
-	std::vector<std::string> vec = ParseItemName(item_name);
+	vector<string> vec = ParseItemName(item_name);
 	Value* val = &doc_;
-	for(std::vector<std::string>::size_type i = 0; i != vec.size(); ++i) {
+	for(vector<string>::size_type i = 0; i != vec.size(); ++i) {
 		if(val->HasMember(vec[i].c_str()))
 			val = &((*val)[vec[i].c_str()]);
 		else {
@@ -99,19 +93,19 @@ int ConfigParser::GetIntItem(const std::string& item_name) {
 	}
 }
 
-std::vector<std::string> ConfigParser::ParseItemName(const std::string& item_name) {
-	std::vector<std::string> vec;
-	std::string::size_type p1 = 0;
-	std::string::size_type p2 = item_name.find('|', p1);
+vector<string> ConfigParser::ParseItemName(const string& item_name) {
+	vector<string> vec;
+	string::size_type p1 = 0;
+	string::size_type p2 = item_name.find('|', p1);
 
-	while(p2 != std::string::npos) {
-		std::string name = item_name.substr(p1, p2-p1);
+	while(p2 != string::npos) {
+		string name = item_name.substr(p1, p2-p1);
 		vec.push_back(Trim(name));
 		p1 = p2 + 1;
 		p2 = item_name.find('|', p1);
 	}
 
-	std::string name = item_name.substr(p1);	
+	string name = item_name.substr(p1);	
 	vec.push_back(Trim(name));
 
 	return vec;
