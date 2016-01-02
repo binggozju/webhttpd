@@ -13,9 +13,8 @@
 	},
 	
 	"server": {
-		"keepalive_timeout": 65
-		"listen": 80,
+		"keepalive_timeout": 65,
+		"listen": 8008,
 		"www": "./html"
 	}
-
 }

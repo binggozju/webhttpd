@@ -1,6 +1,6 @@
 # Makefile for webhttpd
 
-VERSION = 0.1.0
+VERSION = 0.1.1
 APP = webhttp
 TARGET = webhttpd.${VERSION}
 
@@ -17,7 +17,7 @@ BINDIR = ./bin
 SRCDIR = .
 SRCS = $(wildcard $(SRCDIR)/*.cc $(SRCDIR)/*.cpp)
 OBJS = $(addsuffix .o, $(basename $(SRCS)))
-HEADS = $(addsuffix .h, $(basename $(SRCS)))
+HEADS = $(addsuffix .h, $(basename $(SRCS))) $(SRCDIR)/webhttpd_core.h
 
 all: $(TARGET)
 
@@ -31,6 +31,7 @@ clean:
 	rm -rf *.o $(TARGET)
 install:
 	mkdir -p $(BINDIR); install $(TARGET) $(BINDIR)/
+	rm -f $(BINDIR)/$(APP); cd $(BINDIR); ln -s $(TARGET) $(APP)
 show:
 	@echo $(SRCS)
 	@echo "------------------------------------"

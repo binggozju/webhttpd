@@ -1,8 +1,8 @@
 #ifndef WEBHTTPD_CORE_H_
 #define WEBHTTPD_CORE_H_
 
-#define WHD_OK			0
-#define WHD_ERROR		-1
+#define HTTPD_OK			0
+#define HTTPD_ERROR			-1
 
 #include <sys/types.h>
 #include <sys/stat.h>

@@ -246,14 +246,14 @@ void syntax(void)
 }
 
 int main(int argc, char** argv) {
-	string conf_file_name = "conf/webhttpd.json";
+	string conf_file_name = "./conf/webhttpd.json";
 
 	// parse command option
 	opt_parser = OptionsParser::GetInstance();
 	opt_parser->Parse(argc, argv);
 	if("" != opt_parser->GetOptionVal('h')) {
 		opt_parser->Help();
-		return 0;
+		return HTTPD_OK;
 	}
 	if("" != opt_parser->GetOptionVal('c'))
 		conf_file_name = opt_parser->GetOptionVal('c');
@@ -261,21 +261,20 @@ int main(int argc, char** argv) {
 
 
 	// load configuration file
-	if(0 != conf_parser.LoadConfFile(conf_file_name)) { 
-		fprintf(stderr, "error: fail to create the ConfigParser object\n");
-		return 1;
-	}
+	if(0 != conf_parser.LoadConfFile(conf_file_name)) 
+		return HTTPD_ERROR;
 	fprintf(stderr, "load %s successfully\n", conf_file_name.c_str());
 
 
 	// initialize the logging module
 	string log_level = conf_parser.GetStringItem("log| level");
+	fprintf(stdout, "log level: %s\n", log_level.c_str());
 	int log_maxsize = conf_parser.GetIntItem("log| maxsize");
 	int log_backup = conf_parser.GetIntItem("log| backup");
 	string logfile_runtime_name = conf_parser.GetStringItem("log| runtime_log");
 	string logfile_access_name = conf_parser.GetStringItem("log| access_log");
 	
-	logger.SetLogger("master", logfile_runtime_name, log_maxsize, log_backup);
+	logger.SetLogger("webhttpd", logfile_runtime_name, log_maxsize, log_backup);
 	logger.SetLevel(log_level);
 	fprintf(stdout, "initialize logger\n");
 
@@ -305,25 +304,21 @@ int main(int argc, char** argv) {
 
 	// ===================================================================
 
-	unsigned short port = 0;
+	int port = 0;
 	if (signal(SIGPIPE, SIG_IGN) == SIG_ERR)
-		return (1);
-	//if (argc < 2) {
-	//	syntax();
-	//	return 1;
-	//}
+		return HTTPD_ERROR;
 
 	base = event_base_new();
 	if (!base) {
-		fprintf(stderr, "Couldn't create an event_base: exiting\n");
-		return 1;
+		fprintf(stderr, "couldn't create an event_base, exiting\n");
+		return HTTPD_ERROR;
 	}
 
 	/* Create a new evhttp object to handle requests. */
 	http = evhttp_new(base);
 	if (!http) {
-		fprintf(stderr, "couldn't create evhttp. Exiting.\n");
-		return 1;
+		fprintf(stderr, "couldn't create evhttp, exiting\n");
+		return HTTPD_ERROR;
 	}
 
 	/* The /dump URI will dump all requests to stdout and say 200 ok. */
@@ -331,17 +326,18 @@ int main(int argc, char** argv) {
 
 	/* We want to accept arbitrary requests, so we need to set a "generic"
 	 * cb.  We can also add callbacks for specific paths. */
-	evhttp_set_gencb(http, send_document_cb, argv[1]);
+	string html_path = conf_parser.GetStringItem("server| www");
+	evhttp_set_gencb(http, send_document_cb, (char*)html_path.c_str());
 
 	/* Now we tell the evhttp what port to listen on */
+	port = conf_parser.GetIntItem("server| listen");
 	handle = evhttp_bind_socket_with_handle(http, "0.0.0.0", port);
 	if (!handle) {
-		fprintf(stderr, "couldn't bind to port %d. Exiting.\n",
-		    (int)port);
-		return 1;
+		fprintf(stderr, "couldn't bind to port %d. Exiting.\n", port);
+		return HTTPD_ERROR;
 	}
 
-	{
+	//{
 		/* Extract and display the address we're listening on. */
 		struct sockaddr_storage ss;
 		evutil_socket_t fd;
@@ -354,7 +350,7 @@ int main(int argc, char** argv) {
 		memset(&ss, 0, sizeof(ss));
 		if (getsockname(fd, (struct sockaddr *)&ss, &socklen)) {
 			perror("getsockname() failed");
-			return 1;
+			return HTTPD_ERROR;
 		}
 		if (ss.ss_family == AF_INET) {
 			got_port = ntohs(((struct sockaddr_in*)&ss)->sin_port);
@@ -365,7 +361,7 @@ int main(int argc, char** argv) {
 		} else {
 			fprintf(stderr, "Weird address family %d\n",
 			    ss.ss_family);
-			return 1;
+			return HTTPD_ERROR;
 		}
 		addr = evutil_inet_ntop(ss.ss_family, inaddr, addrbuf,
 		    sizeof(addrbuf));
@@ -375,11 +371,11 @@ int main(int argc, char** argv) {
 			    "http://%s:%d",addr,got_port);
 		} else {
 			fprintf(stderr, "evutil_inet_ntop failed\n");
-			return 1;
+			return HTTPD_ERROR;
 		}
-	}
+	//}
 
 	event_base_dispatch(base);
 
-	return 0;
+	return HTTPD_OK;
 }

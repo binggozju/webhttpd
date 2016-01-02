@@ -1,7 +1,7 @@
 #include "options_parser.h"
 
 OptionsParser::OptionsParser() {
-	AddNewOption('c', "conf", "specify the configuration file.");
+	AddNewOption('c', "conf", "specify the configuration file, ./conf/webhttpd.conf default.");
 	AddNewOption('h', "help", "print the help infomation.");
 }
 

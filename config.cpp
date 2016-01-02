@@ -27,6 +27,7 @@ int ConfigParser::LoadConfFile(const string& conf_file) {
 		fprintf(stderr, "error: unable to open the configuration file\n");
 		return 1;
 	}
+	fprintf(stdout, "conf: %s\n", conf_data.c_str());
 
 	/* 解析配置文件 */
 	if("" == conf_data) {
